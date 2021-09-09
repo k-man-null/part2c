@@ -1,25 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import react, { useState, useEffect } from 'react'
+import axios from 'axios'
 
-function App() {
+const App = () => {
+
+  const [countries, setCountries] = useState([])
+  const [ results, setResults] = useState([])
+  const [ querry, setQuerry ] = useState()
+  const [ regex, setRegex ] = useState()
+
+  useEffect(() => {
+    axios
+    .get('https://restcountries.eu/rest/v2/all')
+    .then(response => {
+      setCountries(response.data)
+    })
+  },[])
+
+  const handleQuerry = (event) => {
+    event.preventDefault()
+    setQuerry(event.target.value)
+    setRegex(new RegExp(`${querry}`, 'i'))
+    filterQuerry(querry)
+  }
+
+  const filterQuerry = (querry) => {
+    
+    //console.log(countries)
+    setResults(countries.filter(country => country.name.match(regex)) || [])
+  }
+  // console.log(countries[0]?.name)
+
+  const toBeRendered = ()=> {
+      if(results.length > 10) {
+        return "Too many matches specify the search"
+      }else if(results.length > 1 && results.length < 10){
+        return results.map(country => <li>{country.name}</li>)
+      }else if(results.length == 1){
+        return <li>{results.name}</li>
+      }
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+      <div>
+         <div>{querry}</div>
+      <div>
+        find countries<input 
+        onChange={handleQuerry}/>
+      </div>
+      <div>
+        <ul>
+          {toBeRendered}
+        </ul>
+       
+      </div>
+      </div>
+  )
 }
 
 export default App;
