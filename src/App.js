@@ -1,12 +1,33 @@
-import react, { useState, useEffect } from 'react'
+import react,{ useState, useEffect } from 'react'
 import axios from 'axios'
+
+
+// const ToBeRendered = (results)=> {
+//   console.log("Yeeeeeeee", results)
+//     if(results.length > 10) {
+//       return(<div>"Too many matches specify the search"</div>)
+//     }else if(results.length > 1 && results.length < 10){
+//       return(<div>
+//         <ul>
+//           {results.map(result => <li>{result.name}</li>)}
+//         </ul>
+//         )
+//         </div>)} 
+//     else if(results.length === 1){
+//       return(<ul>
+//         <li>{results.name}</li>
+//       </ul>) 
+//     }else {
+//       return(<div>No countries</div>)
+//     }
+//   }
 
 const App = () => {
 
   const [countries, setCountries] = useState([])
   const [ results, setResults] = useState([])
   const [ querry, setQuerry ] = useState()
-  const [ regex, setRegex ] = useState()
+
 
   useEffect(() => {
     axios
@@ -19,41 +40,30 @@ const App = () => {
   const handleQuerry = (event) => {
     event.preventDefault()
     setQuerry(event.target.value)
-    setRegex(new RegExp(`${querry}`, 'i'))
-    filterQuerry(querry)
+    setResults(countries.filter(cNames => cNames.name.includes(querry)))
   }
 
-  const filterQuerry = (querry) => {
-    
-    //console.log(countries)
-    setResults(countries.filter(country => country.name.match(regex)) || [])
-  }
-  // console.log(countries[0]?.name)
+  // const filterQuerry = (querry) => {
+  //   console.log("Querry",querry)
+  //   console.log("Couyacgagfjhagahhbflav",countries)
+  //   setResults(countries.filter(countryNames => countryNames.name.toLowerCase().includes(querry)) || [])
+  // }
 
-  const toBeRendered = ()=> {
-      if(results.length > 10) {
-        return "Too many matches specify the search"
-      }else if(results.length > 1 && results.length < 10){
-        return results.map(country => <li>{country.name}</li>)
-      }else if(results.length == 1){
-        return <li>{results.name}</li>
-      }
-  }
   return (
-      <div>
-         <div>{querry}</div>
-      <div>
-        find countries<input 
-        onChange={handleQuerry}/>
-      </div>
-      <div>
-        <ul>
-          {toBeRendered}
-        </ul>
-       
-      </div>
-      </div>
-  )
-}
+    <div>
+       <div>{querry}</div>
+    <div>
+      find countries<input 
+      onKeyUp={handleQuerry}/>
+    </div>
+    {/* <ToBeRendered results={results}/> */}
+    <ul>
+      {results.map( result => <li key={result.id}>{result.name}</li>)}
+    </ul> 
 
+    </div>
+)
+  
+};
+  
 export default App;
